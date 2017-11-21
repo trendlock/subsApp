@@ -1,0 +1,12 @@
+name: subsApp
+title: subsApp
+username:
+account: trendlock
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 238091
+bundleId: 1086886
+url: https://trendlock.shinyapps.io/subsApp/
+when: 1511226872.47195
+asMultiple: FALSE
+asStatic: FALSE
