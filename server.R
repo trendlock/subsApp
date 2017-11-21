@@ -431,7 +431,4 @@ shinyServer(function(input, output) {
     # >> end render drawn ====
   })
 
-  
-  
-  
 })

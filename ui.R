@@ -96,7 +96,36 @@ shinyUI(
               br(),
               fluidRow(
                 div(class = "ui horizontal divider", uiicon("settings"), "Power Reference Point"),
-                br(),
+                
+                # render accordian UI
+                
+                column(12,
+                       
+                       div(class = "ui styled accordion", 
+                           div(class = "active title", 
+                               uiicon("dropdown icon"), "Hotel Match"), 
+                           div(class = "active content", 
+                               
+                               
+                               actionButton("HL_jet_but", "Jet"),
+                               actionButton("HL_prop_but", "Prop"),
+                               br(),br(),
+                               HTML("<p>Choose speed at which</p>"),
+                               HTML("<p>Hotel Load = Power Drawn</p>"),
+                               HTML("<p>by propulsion systems:</p>"),
+                               br(),
+                               sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")
+                               
+                           ) 
+                       ),
+                
+                    
+                    div(class = "title", uiicon("dropdown icon"), 
+                        "What kinds of dogs are there?"), 
+                    div(class = "content", 
+                        p("some text"))),
+                
+                
                 column(4,
                        # Hotel Load Match ====
                        div(class = "ui card",
@@ -105,14 +134,7 @@ shinyUI(
                                uiicon("settings"),
                                "Hotel Match"),
                            div(class = "content",
-                               actionButton("HL_jet_but", "Jet"),
-                               actionButton("HL_prop_but", "Prop"),
-                               br(),br(),
-                               HTML("<p>Choose speed at which</p>"),
-                               HTML("<p>Hotel Load = Power Drawn</p>"),
-                               HTML("<p>by propulsion systems:</p>"),
-                               br(),
-                               sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")),
+                               br()),
                            br(), br(), br(), br()
                        )),
                 column(4,
