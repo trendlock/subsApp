@@ -32,7 +32,7 @@ shinyUI(
 
     fluidPage(
       splitLayout(
-        #tags$style("body {background-color: #ddd9c5;}"),
+        
 
         # Main Subs Plot ====
           verticalLayout(
@@ -96,81 +96,43 @@ shinyUI(
               br(),
               fluidRow(
                 div(class = "ui horizontal divider", uiicon("settings"), "Power Reference Point"),
+
                 
-                # render accordian UI
-                
-                column(12,
-                       
-                       div(class = "ui styled accordion", 
-                           div(class = "active title", 
-                               uiicon("dropdown icon"), "Hotel Match"), 
-                           div(class = "active content", 
-                               
-                               
-                               actionButton("HL_jet_but", "Jet"),
-                               actionButton("HL_prop_but", "Prop"),
-                               br(),br(),
-                               HTML("<p>Choose speed at which</p>"),
-                               HTML("<p>Hotel Load = Power Drawn</p>"),
-                               HTML("<p>by propulsion systems:</p>"),
-                               br(),
-                               sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")
-                               
-                           ) 
-                       ),
-                
-                    
-                    div(class = "title", uiicon("dropdown icon"), 
-                        "What kinds of dogs are there?"), 
-                    div(class = "content", 
-                        p("some text"))),
-                
-                
-                column(4,
-                       # Hotel Load Match ====
-                       div(class = "ui card",
-                           div(class = "content",
-                               div(class = "right floated meta", "(kts)"),
-                               uiicon("settings"),
-                               "Hotel Match"),
-                           div(class = "content",
-                               br()),
-                           br(), br(), br(), br()
-                       )),
-                column(4,
-                       # Top Speed + Power Match ====
-                       div(class = "ui card",
-                           div(class = "content",
-                               div(class = "right floated meta", " "),
-                               uiicon("settings"),
-                               "Top Speed + Power"),
-                           div(class = "content",
-                               actionButton("TSP_jet_but", "Jet"),
-                               actionButton("TSP_prop_but", "Prop"),
-                               br(), br(),
-                               HTML("<p>Choose max power of</p>"),
-                               HTML("<p>main motor:</p>"),
-                               br(),
-                               sliderInput("max_power", NULL, 5, 9, 7, post = " MW"),
-                               HTML("<p>Choose Top Speed attained:</p>"),
-                               sliderInput("max_speed", NULL, 16, 24, 20, post = " kts")))),
-                column(4,
-                       # Other known reference ====
-                       div(class = "ui card",
-                           div(class = "content",
-                               uiicon("settings"),
-                               "Other Reference"),
-                           div(class = "content",
-                               actionButton("OKR_jet_but", "Jet"),
-                               actionButton("OKR_prop_but", "Prop"),
-                               br(),br(),
-                               HTML("<p>Choose a known power</p>"),
-                               HTML("<p>(propulsion) and speed</p>"),
-                               HTML("<p>match:</p>"),
-                               br(),
-                               sliderInput("OKR_power", NULL, 50, 5000, 500, post = " kW"),
-                               sliderInput("OKR_speed", NULL, 0.5, 18, 10, post = " kts")))),
-                column(3, br()))
+                bsCollapse(id = "pwr_ref_point_collapse", 
+                           open = "Hotel Match",
+                           bsCollapsePanel("Hotel Match", 
+                                           uiicon("settings"),
+                                           actionButton("HL_jet_but", "Jet"),
+                                           actionButton("HL_prop_but", "Prop"),
+                                           br(),br(),
+                                           HTML("<p>Choose speed at which</p>"),
+                                           HTML("<p>Hotel Load = Power Drawn</p>"),
+                                           HTML("<p>by propulsion systems:</p>"),
+                                           br(),
+                                           sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")),
+                           bsCollapsePanel("Top Speed + Power",
+                                           uiicon("settings"),
+                                           actionButton("TSP_jet_but", "Jet"),
+                                           actionButton("TSP_prop_but", "Prop"),
+                                           br(), br(),
+                                           HTML("<p>Choose max power of</p>"),
+                                           HTML("<p>main motor:</p>"),
+                                           br(),
+                                           sliderInput("max_power", NULL, 5, 9, 7, post = " MW"),
+                                           HTML("<p>Choose Top Speed attained:</p>"),
+                                           sliderInput("max_speed", NULL, 16, 24, 20, post = " kts")),
+                           
+                           bsCollapsePanel("Other Known Reference", 
+                                           uiicon("settings"),
+                                           actionButton("OKR_jet_but", "Jet"),
+                                           actionButton("OKR_prop_but", "Prop"),
+                                           br(),br(),
+                                           HTML("<p>Choose a known power</p>"),
+                                           HTML("<p>(propulsion) and speed</p>"),
+                                           HTML("<p>match:</p>"),
+                                           br(),
+                                           sliderInput("OKR_power", NULL, 50, 5000, 500, post = " kW"),
+                                           sliderInput("OKR_speed", NULL, 0.5, 18, 10, post = " kts"))))
               )))),
 
     br(),
