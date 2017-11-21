@@ -3,8 +3,7 @@
 library(shiny)
 library(tidyverse)
 library(lubridate)
-
-#devtools::install_github("ropensci/plotly")
+library(shinyBS)
 library(plotly)
 
 #devtools::install_github("Appsilon/shiny.semantic")
@@ -15,6 +14,7 @@ library(shinythemes)
 
 #devtools::install_github("nstrayer/shinysense")
 library(shinysense)
+
 
 
 
@@ -29,17 +29,31 @@ shinyUI(
     tabPanel(
       title = "First Tab Title",
 
+
     fluidPage(
       splitLayout(
         #tags$style("body {background-color: #ddd9c5;}"),
 
         # Main Subs Plot ====
           verticalLayout(
+            semanticPage(
+              div(class = "ui horizontal divider", uiicon("settings"), "Efficiency Assumption"),
+              plotlyOutput("eff_plot"),
+              
+              bsButton("tog_input", label = "Toggle Jet or Prop input",
+                       block = F, type = "toggle", value = F),
+              actionButton("zoom_eff", "Zoom"),
+              
+              div(class = "ui horizontal divider", uiicon("settings"), "Draw here"),
+              shinydrawrUI("drawr_plot"),
 
-                          plotlyOutput("eff_plot"),
-                          shinydrawrUI("drawr_plot")
-
-            ),
+              
+              # pop up window
+              bsModal("modalExample", "Efficiency Assumption", "zoom_eff", size = "large",
+                      plotlyOutput("eff_plot_modal"))
+              
+            )),
+        
 
           # Assumptions and params ====
 
@@ -142,17 +156,39 @@ shinyUI(
     fluidPage(
       semanticPage(
         fluidRow(
-          column(4,
+          column(4, align="center",
                    div(class = "ui horizontal divider", uiicon("settings"), "Range"),
-                 plotlyOutput("range_plot")),
-          column(4,
+                 plotlyOutput("range_plot"),
+                 actionButton("zoom_range", "Zoom")),
+          
+          # pop up window
+          bsModal("modalExample1", "Range", "zoom_range", size = "large",
+                  plotlyOutput("range_plot_modal")),
+          
+          
+          column(4, align="center",
                    div(class = "ui horizontal divider", uiicon("settings"), "Endurance"),
-                 plotlyOutput("endurance_plot")),
-          column(4,
+                 plotlyOutput("endurance_plot"),
+                 actionButton("zoom_endurance", "Zoom")),
+
+          # pop up window
+          bsModal("modalExample2", "endurance", "zoom_endurance", size = "large",
+                  plotlyOutput("endurance_plot_modal")),
+          
+          
+          column(4, align="center",
                    div(class = "ui horizontal divider", uiicon("settings"), "Power"),
-                 plotlyOutput("power_plot"))
+                 plotlyOutput("power_plot"),
+                 actionButton("zoom_power", "Zoom")),
+          
+          # pop up window
+          bsModal("modalExample3", "Power", "zoom_power", size = "large",
+                  plotlyOutput("power_plot_modal"))
+          
         )
 
       ))
     ))
+  
+
   )

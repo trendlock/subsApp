@@ -13,7 +13,7 @@ library(shiny.semantic)
 #devtools::install_github("nstrayer/shinysense")
 library(shinysense)
 
-#devtools::install_github("trendlock/submarines@subsApp2", auth_token = read_rds("extdata/gh_token.rds"))
+#devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
 library(submarines)
 
 
@@ -22,6 +22,7 @@ library(submarines)
 
 df <- read_rds("extdata/default_subs_df.rds")
 
+df$eff.prop
 
 # Server ====
 
@@ -168,25 +169,40 @@ shinyServer(function(input, output) {
   output$eff_plot <- renderPlotly({
     eff_plot()
   })
+  output$eff_plot_modal <- renderPlotly({
+    eff_plot()
+  })
+  
 
 
   #  > Endurance  plot
   output$endurance_plot <- renderPlotly({
     endurance_plot()
   })
+  output$endurance_plot_modal <- renderPlotly({
+    endurance_plot()
+  })
+  
 
   #  > Range   plot
   output$range_plot <- renderPlotly({
     range_plot()
   })
 
+  output$range_plot_modal <- renderPlotly({
+    range_plot()
+  })
+  
 
 
   #  > Pwer  plot
   output$power_plot <- renderPlotly({
     power_plot()
   })
-
+  output$power_plot_modal <- renderPlotly({
+    power_plot()
+  })
+  
 
   # *** end plots ====
 
@@ -202,6 +218,7 @@ shinyServer(function(input, output) {
     "drawr_plot",
     data = df_draw,
     draw_start = 0.5,
+    raw_draw = T,
     x_key = "kts",
     y_key = "eff.prop",
     y_max = 1,
@@ -215,23 +232,80 @@ shinyServer(function(input, output) {
   #logic for what happens after a user has drawn their values. Note this will fire on editing again too.
   observeEvent(drawChart(), {
 
-    drawnValues <- drawChart()
+    drawn_vals <- drawChart()
 
 
-    message("drawnValues")
-    print(drawnValues)
-    print(length(drawnValues))
-
-
+    message("drawn_vals")
+    print(drawn_vals)
+    print(length(drawn_vals))
     # a bodge to be fixed....
-    drawnValues <- c(drawnValues, tail(drawnValues, 1))
+    drawn_vals <- c(drawn_vals, tail(drawn_vals, 1))
+    
+    
+    
 
-    new_df <- df %>%
-      mutate(eff.jet = drawnValues,
-             eff.prop = 1 - log(kts + 3)/6 + 0.10 - (kts/500),
-             input$hotel_load)
+    
+    # check status on saved vals
+    status_jet <- safe_read_rds("saved_jet_input.rds")
+    status_prop <- safe_read_rds("saved_prop_input.rds")
+    
+    
+    
+    #  drawing as jet input ======================
+    if(!input$tog_input) {
+      print("running drawing input for jet")
+      
+      # if not found, write fresh jet input
+      if (is.null(status_jet["result"])) {
+        write_rds(drawn_vals, "saved_jet_input.rds")
+      } 
+      
+      
+      # add drawn data
+      new_df <- mutate(df, eff.jet = drawn_vals)
+      
+      # look for saved prop data
+      if (is.null(status_prop["error"])) {
+        new_df <- mutate(new_df, eff.prop = read_rds("saved_prop_input.rds"))
+      }  else {
+        new_df <- mutate(new_df, eff.prop = 1 - log(kts + 3)/6 + 0.10 - (kts/500))
+      }
+      
+    } else { # drawing as prop input ======================
 
+      print("running drawing input for prop")
+      
+      # if not found, write fresh
+      if (is.null(status_prop["result"])) {
+        write_rds(drawn_vals, "saved_prop_input.rds")
+      } 
+      
+      # add drawn data
+      new_df <- mutate(df, eff.prop = drawn_vals)
+      
+      # look for saved jet data
+      if (is.null(status_jet["error"])) {
+        new_df <- mutate(new_df, eff.jet = read_rds("saved_jet_input.rds"))
+      }  else {
+        new_df <- mutate(new_df, eff.jet = pull(df, eff.jet))
+      }
+    }
 
+    
+    # Add hotel load val
+    new_df <- new_df %>% 
+      mutate(hotel = input$hotel_load)
+
+    
+    # smooth as
+    fit_poly_mod_jet <- lm(pull(new_df, eff.jet) ~ poly(pull(new_df, kts), 3))
+    fit_poly_mod_prop <- lm(pull(new_df, eff.prop) ~ poly(pull(new_df, kts), 3))
+    new_df <- new_df %>%
+      mutate(eff.jet = fit_poly_mod_jet$fitted.values,
+             eff.prop = fit_poly_mod_prop$fitted.values)
+    
+
+    
 
     # run computation ====
     df_react <- reactive({
@@ -320,24 +394,44 @@ shinyServer(function(input, output) {
     output$eff_plot <- renderPlotly({
       eff_plot()
     })
-
-
+    output$eff_plot_modal <- renderPlotly({
+      eff_plot()
+    })
+    
+    
+    
     #  > Endurance  plot
     output$endurance_plot <- renderPlotly({
       endurance_plot()
     })
-
+    output$endurance_plot_modal <- renderPlotly({
+      endurance_plot()
+    })
+    
+    
     #  > Range   plot
     output$range_plot <- renderPlotly({
       range_plot()
     })
-
+    
+    output$range_plot_modal <- renderPlotly({
+      range_plot()
+    })
+    
+    
+    
     #  > Pwer  plot
     output$power_plot <- renderPlotly({
+      power_plot()
+    })
+    output$power_plot_modal <- renderPlotly({
       power_plot()
     })
 
     # >> end render drawn ====
   })
 
+  
+  
+  
 })
