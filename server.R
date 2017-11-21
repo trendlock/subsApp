@@ -4,6 +4,8 @@ library(shiny)
 library(tidyverse)
 library(lubridate)
 
+
+
 #devtools::install_github("ropensci/plotly")
 library(plotly)
 
@@ -22,7 +24,6 @@ library(submarines)
 
 df <- read_rds("extdata/default_subs_df.rds")
 
-df$eff.prop
 
 # Server ====
 
@@ -30,6 +31,21 @@ shinyServer(function(input, output) {
 
   # pre user input ----
 
+  
+  # render Toggle UI buttons
+  
+  output$render_HL_jet_but <- renderUI({
+    bsButton("HL_jet_but", label = "Jet", block = F, type = "toggle", value = T)
+  })
+  
+  output$render_HL_jet_but <- renderUI({
+    bsButton("HL_prop_but", label = "Prop", block = F, type = "toggle", value = T)
+  })
+  
+  
+  
+  
+  
   # picks which  batt density to choose... ----
 
   # defaults
@@ -50,33 +66,35 @@ shinyServer(function(input, output) {
   user_inputs <- reactiveValues(system = "jet", method = "hotel match")
 
   # > Hotel Match
-  observeEvent(input$HL_jet_but,{
-    user_inputs$system <- "jet"
-    user_inputs$method <- "hotel match"
-  })
-  observeEvent(input$HL_prop_but,{
-    user_inputs$system <- "prop"
-    user_inputs$method <- "hotel match"
+  observeEvent(input$HLM_jet_prop,{
+    if (input$HLM_jet_prop == "Jet") {
+      user_inputs$system <- "jet"
+      user_inputs$method <- "other reference"
+    } else {
+      user_inputs$system <- "prop"
+      user_inputs$method <- "other reference"
+    }
   })
 
   # > Top speed Pwer
-  observeEvent(input$TSP_jet_but,{
-    user_inputs$system <- "jet"
-    user_inputs$method <- "max power"
-
-  })
-  observeEvent(input$TSP_prop_but,{
-    user_inputs$system <- "prop"
-    user_inputs$method <- "max power"
+  observeEvent(input$OKR_jet_prop,{
+    if (input$TSP_jet_prop == "Jet") {
+      user_inputs$system <- "jet"
+      user_inputs$method <- "other reference"
+    } else {
+      user_inputs$system <- "prop"
+      user_inputs$method <- "other reference"
+    }
   })
   # > Other refernce
-  observeEvent(input$OKR_jet_but,{
-    user_inputs$system <- "jet"
-    user_inputs$method <- "other reference"
-  })
-  observeEvent(input$OKR_prop_but,{
-    user_inputs$system <- "prop"
-    user_inputs$method <- "other reference"
+  observeEvent(input$OKR_jet_prop,{
+    if (input$OKR_jet_prop == "Jet") {
+      user_inputs$system <- "jet"
+      user_inputs$method <- "other reference"
+    } else {
+      user_inputs$system <- "prop"
+      user_inputs$method <- "other reference"
+    }
   })
 
 
@@ -104,7 +122,6 @@ shinyServer(function(input, output) {
 
     ggplot(eff_plot_df, aes(x = kts, y = val, col = cat))+
       geom_line()+
-      labs(title = "Efficiency Assumption") +
       theme_classic()
 
     ggplotly()%>%
@@ -209,24 +226,47 @@ shinyServer(function(input, output) {
 
   # post User input -----
 
+
+  # render draw message for toggle
+  
+  observeEvent(input$tog_input,{
+    
+    if(!input$tog_input) {
+      mess_draw <- "Propose jet efficiency"
+    } else {
+      mess_draw <- "Propose propeller efficiency"
+    }
+    
+    output$message_drawr <- renderText(
+      mess_draw
+    )
+    
+  })
+  
+  
+  
+  
   df_draw <- df %>%
     mutate(eff.prop = NA)
+  
+  
 
   #server side call of the drawr module
+  
+
+
   drawChart <- callModule(
     shinydrawr,
     "drawr_plot",
     data = df_draw,
     draw_start = 0.5,
-    raw_draw = T,
     x_key = "kts",
     y_key = "eff.prop",
     y_max = 1,
     y_min = 0
   )
 
-
-
+  
 
 
   #logic for what happens after a user has drawn their values. Note this will fire on editing again too.
@@ -255,6 +295,7 @@ shinyServer(function(input, output) {
     if(!input$tog_input) {
       print("running drawing input for jet")
       
+
       # if not found, write fresh jet input
       if (is.null(status_jet["result"])) {
         write_rds(drawn_vals, "saved_jet_input.rds")
@@ -264,6 +305,7 @@ shinyServer(function(input, output) {
       # add drawn data
       new_df <- mutate(df, eff.jet = drawn_vals)
       
+      print(new_df)
       # look for saved prop data
       if (is.null(status_prop["error"])) {
         new_df <- mutate(new_df, eff.prop = read_rds("saved_prop_input.rds"))
@@ -275,6 +317,7 @@ shinyServer(function(input, output) {
 
       print("running drawing input for prop")
       
+
       # if not found, write fresh
       if (is.null(status_prop["result"])) {
         write_rds(drawn_vals, "saved_prop_input.rds")
@@ -291,6 +334,10 @@ shinyServer(function(input, output) {
       }
     }
 
+    # render draw mmessage
+    
+
+    
     
     # Add hotel load val
     new_df <- new_df %>% 
@@ -331,7 +378,6 @@ shinyServer(function(input, output) {
 
       ggplot(eff_plot_df, aes(x = kts, y = val, col = cat))+
         geom_line()+
-        labs(title = "Efficiency Assumption") +
         theme_classic()
 
       ggplotly()%>%

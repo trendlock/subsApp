@@ -6,6 +6,8 @@ library(lubridate)
 library(shinyBS)
 library(plotly)
 
+library(shinyWidgets)
+
 #devtools::install_github("Appsilon/shiny.semantic")
 library(shiny.semantic)
 
@@ -29,36 +31,41 @@ shinyUI(
     tabPanel(
       title = "First Tab Title",
 
-
+      semanticPage(
     fluidPage(
       splitLayout(
         
 
         # Main Subs Plot ====
-          verticalLayout(
-            semanticPage(
-              div(class = "ui horizontal divider", uiicon("settings"), "Efficiency Assumption"),
-              plotlyOutput("eff_plot"),
+          fluidRow(
+            
               
-              bsButton("tog_input", label = "Toggle Jet or Prop input",
-                       block = F, type = "toggle", value = F),
-              actionButton("zoom_eff", "Zoom"),
               
-              div(class = "ui horizontal divider", uiicon("settings"), "Draw here"),
-              shinydrawrUI("drawr_plot"),
+              column(10, align = "center",
+                     div(class = "ui horizontal divider", uiicon("settings"), "Efficiency Assumption"),
+                     plotlyOutput("eff_plot")),
+              column(10, align = "center",
+                     bsButton("tog_input", label = "Toggle Jet or Prop input",
+                              block = F, type = "toggle", value = F),
+                     actionButton("zoom_eff", "Zoom")),
+              column(10, align = "center",
+                     
+                     div(class = "ui horizontal divider", textOutput("message_drawr")),
+                     shinydrawrUI("drawr_plot")
+                     ),
+
 
               
               # pop up window
               bsModal("modalExample", "Efficiency Assumption", "zoom_eff", size = "large",
                       plotlyOutput("eff_plot_modal"))
               
-            )),
+            ),
         
 
           # Assumptions and params ====
 
           fluidPage(
-            semanticPage(
 
               fluidRow(
                 div(class = "ui horizontal divider", uiicon("settings"), "Assumptions"),
@@ -102,9 +109,8 @@ shinyUI(
                            open = "Hotel Match",
                            bsCollapsePanel("Hotel Match", 
                                            uiicon("settings"),
-                                           actionButton("HL_jet_but", "Jet"),
-                                           actionButton("HL_prop_but", "Prop"),
-                                           br(),br(),
+                                           
+                                           radioGroupButtons(inputId = "HLM_jet_prop", label = "Choices", choices = c("Jet",  "Propeller")),
                                            HTML("<p>Choose speed at which</p>"),
                                            HTML("<p>Hotel Load = Power Drawn</p>"),
                                            HTML("<p>by propulsion systems:</p>"),
@@ -112,8 +118,7 @@ shinyUI(
                                            sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")),
                            bsCollapsePanel("Top Speed + Power",
                                            uiicon("settings"),
-                                           actionButton("TSP_jet_but", "Jet"),
-                                           actionButton("TSP_prop_but", "Prop"),
+                                           radioGroupButtons(inputId = "TSP_jet_prop", label = "Choices", choices = c("Jet",  "Propeller")),
                                            br(), br(),
                                            HTML("<p>Choose max power of</p>"),
                                            HTML("<p>main motor:</p>"),
@@ -124,8 +129,7 @@ shinyUI(
                            
                            bsCollapsePanel("Other Known Reference", 
                                            uiicon("settings"),
-                                           actionButton("OKR_jet_but", "Jet"),
-                                           actionButton("OKR_prop_but", "Prop"),
+                                           radioGroupButtons(inputId = "OKR_jet_prop", label = "Choices", choices = c("Jet",  "Propeller")),
                                            br(),br(),
                                            HTML("<p>Choose a known power</p>"),
                                            HTML("<p>(propulsion) and speed</p>"),
@@ -133,12 +137,11 @@ shinyUI(
                                            br(),
                                            sliderInput("OKR_power", NULL, 50, 5000, 500, post = " kW"),
                                            sliderInput("OKR_speed", NULL, 0.5, 18, 10, post = " kts"))))
-              )))),
+              ))),
 
     br(),
     br(),
     fluidPage(
-      semanticPage(
         fluidRow(
           column(4, align="center",
                    div(class = "ui horizontal divider", uiicon("settings"), "Range"),
