@@ -5,8 +5,8 @@ account: trendlock
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 238091
-bundleId: 1089627
+bundleId: 1091102
 url: https://trendlock.shinyapps.io/subsApp/
-when: 1511326965.26283
+when: 1511382720.17691
 asMultiple: FALSE
 asStatic: FALSE

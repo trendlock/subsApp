@@ -29,12 +29,15 @@ shinyUI(
     theme = shinytheme("united"),
     title = "App Title",
     
-
+    
+   
     # Tab 1 ====
     tabPanel(
       title = "First Tab Title",
       
-     
+      # css ====
+      #includeCSS("www/custom.css"),
+      
       
       semanticPage(
         
@@ -49,15 +52,18 @@ shinyUI(
                 div(class = "ui horizontal divider", uiicon("tag"), "Efficiency Assumption",  bsButton("zoom_eff", "Zoom", size = "extra-small")),
                 uisegment(plotlyOutput("eff_plot", height = "200px") %>% withSpinner()),
                 
-                div(class = "ui horizontal divider", uiicon("tag"), "Toggle Input"),
-                
+
                 uisegment(align = "center",
-                          bsButton("tog_input", label = "Toggle Jet or Prop input",
-                                   block = F, type = "toggle", value = F)),
+                          radioGroupButtons(inputId = "tog_input", 
+                                            choices = c("Input Jet Effieciency",  
+                                                        "Input Propeller Effieciency"), 
+                                              selected = "Input Jet Effieciency",
+                                            justified = T)),
                 
                 
                 div(class = "ui horizontal divider", textOutput("message_drawr")),
-                uisegment(shinydrawrUI("drawr_plot") %>% withSpinner()),
+                uisegment(height = "300px",
+                  shinydrawrUI("drawr_plot") %>% withSpinner()),
                 
                 # pop up window
                 bsModal("modalExample", "Efficiency Assumption", "zoom_eff", size = "large",
@@ -121,7 +127,9 @@ shinyUI(
                                              choices = c("Jet",  
                                                          "Propeller"), 
                                              selected = "Jet",
-                                             direction = "vertical", justified = T)
+                                             direction = "vertical", justified = T),
+                           div(class = "ui horizontal divider", uiicon("tag"), "Refresh"),
+                           bsButton("restore_defaults", "Restore Defaults", icon = uiicon("refresh"))
                          )),
                   column(8,
                          div(class = "ui raised segment",
@@ -134,7 +142,7 @@ shinyUI(
                                                         "Choose max power of main motor:",
                                                         sliderInput("max_power", NULL, 5, 9, 7, post = " MW"),
                                                         "Choose Top Speed attained:",
-                                                        sliderInput("max_speed", NULL, 16, 24, 20, post = " kts")),
+                                                        sliderInput("max_speed", NULL, 16, 24, 20, step = 0.25, post = " kts")),
                                         
                                         bsCollapsePanel("Other Known Reference", 
                                                         "Choose a known power (propulsion) and speedmatch:",
@@ -145,8 +153,10 @@ shinyUI(
             fluidPage(
               fluidRow(
                 column(4, align="center",
-                       div(class = "ui horizontal divider", uiicon("settings"), "Range", bsButton("zoom_range", "Zoom", size = "extra-small")),
-                       plotlyOutput("range_plot") %>% withSpinner()),
+                       div(class = "ui horizontal divider", uiicon("settings"), "Range", 
+                           bsButton("zoom_range", "Zoom", size = "extra-small"),
+                           bsButton("range_plot_label", "Add Label", size = "extra-small", type = "toggle", value = F)),
+                       plotlyOutput("range_plot")),
                 
                 # pop up window
                 bsModal("modalExample1", "Range", "zoom_range", size = "large",
@@ -154,8 +164,10 @@ shinyUI(
                 
                 
                 column(4, align="center",
-                       div(class = "ui horizontal divider", uiicon("settings"), "Endurance", bsButton("zoom_endurance", "Zoom", size = "extra-small")),
-                       plotlyOutput("endurance_plot") %>% withSpinner()),
+                       div(class = "ui horizontal divider", uiicon("settings"), "Endurance",
+                           bsButton("zoom_endurance", "Zoom", size = "extra-small"),
+                           bsButton("end_plot_label", "Add Label", size = "extra-small", type = "toggle", value = F)),
+                       plotlyOutput("endurance_plot")),
                 
                 # pop up window
                 bsModal("modalExample2", "endurance", "zoom_endurance", size = "large",
@@ -165,8 +177,10 @@ shinyUI(
                 column(4, align="center",
                        #uiheader("h", , icon = uiicon("settings")),
                        
-                       div(class = "ui horizontal divider", uiicon("settings"), "Power", bsButton("zoom_power", "Zoom", size = "extra-small")),
-                       plotlyOutput("power_plot") %>% withSpinner()
+                       div(class = "ui horizontal divider", uiicon("settings"), "Power", 
+                           bsButton("zoom_power", "Zoom", size = "extra-small"),
+                           bsButton("power_plot_label", "Add Label", size = "extra-small", type = "toggle", value = F)),
+                       plotlyOutput("power_plot")
                 ),
                 
                 # pop up window

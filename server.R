@@ -13,10 +13,10 @@ library(plotly)
 #devtools::install_github("Appsilon/shiny.semantic")
 library(shiny.semantic)
 
-#devtools::install_github("nstrayer/shinysense")
+devtools::install_github("nstrayer/shinysense")
 library(shinysense)
 
-#devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
+devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
 library(submarines)
 
 
@@ -31,7 +31,7 @@ df <- read_rds("extdata/default_subs_df.rds")
 shinyServer(function(input, output, session) {
   
   # pre user input ----
-  
+ 
   
   # picks which  batt density to choose... ----
   
@@ -102,9 +102,11 @@ shinyServer(function(input, output, session) {
       filter(cat %in% c("eff.jet", "eff.prop"))
     
     ggplot(eff_plot_df, aes(x = kts, y = val, col = cat))+
-      geom_line()+
-      theme_classic()
-    
+      geom_line() +
+      theme_minimal() +
+      scale_y_continuous(breaks=seq(0, 1, 0.2)) +
+      scale_x_continuous(breaks=seq(0, 20, 2))
+     
     ggplotly()#%>%
     #layout(legend = list(orientation = 'v', y = 0.9, x = 0.7))
     
@@ -116,10 +118,17 @@ shinyServer(function(input, output, session) {
     end_plot_df <- df_react() %>%
       filter(cat %in% c("endurance.prop.hour", "endurance.jet.hour"))
     
+    
+    
+    y_max <- roundUpNice(max(pull(end_plot_df, val)))
+
     ggplot(end_plot_df, aes(x = kts, y = val, col = cat))+
-      geom_line()+
-      #geom_text(aes(label = round(val, digits = 1)), nudge_y = 2, angle = 45)+
-      theme_classic()
+      geom_line() +
+      theme_minimal() +
+      scale_y_continuous(breaks=seq(0, y_max, (y_max/10))) +
+      scale_x_continuous(breaks=seq(0, 20, 2)) +
+      if (!input$end_plot_label) geom_blank() else geom_text(aes(label = round(val, digits = 1)), nudge_y = 2, angle = 45)
+      
     
     ggplotly()%>%
       layout(legend = list(orientation = 'v', y = 0.8, x = 0.5))
@@ -131,10 +140,15 @@ shinyServer(function(input, output, session) {
     range_plot_df <- df_react() %>%
       filter(cat %in% c("range.prop", "range.jet"))
     
+    y_max <- roundUpNice(max(pull(range_plot_df, val)))
+    
     ggplot(range_plot_df, aes(x = kts, y = val, col = cat))+
       geom_line()+
-      #geom_text(aes(label = round(val, digits = 1)), nudge_y = 2, angle = 45)+
-      theme_classic()
+      theme_minimal()+
+      scale_y_continuous(breaks=seq(0, y_max, (y_max/10))) +
+      scale_x_continuous(breaks=seq(0, 20, 2)) +
+      if (!input$range_plot_label) geom_blank() else geom_text(aes(label = round(val, digits = 1)), nudge_y = 2, angle = 45)
+    
     
     ggplotly()%>%
       layout(legend = list(orientation = 'v', y = 0.9, x = 0.5))
@@ -148,9 +162,15 @@ shinyServer(function(input, output, session) {
     power_plot_df <- df_react() %>%
       filter(cat %in% c("hotel","power.mob.drawn.jet", "power.mob.req", "power.mob.drawn.prop"))
     
+    y_max <- roundUpNice(max(pull(power_plot_df, val)))
+    
     ggplot(power_plot_df, aes(x = kts, y = val, col = cat))+
       geom_line()+
-      theme_classic()
+      theme_minimal()+
+      scale_y_continuous(breaks=seq(0, y_max, (y_max/10))) +
+      scale_x_continuous(breaks=seq(0, 20, 2)) +
+      if (!input$power_plot_label) geom_blank() else geom_text(aes(label = round(val, digits = 1)), nudge_y = 2, angle = 45)
+    
     
     
     ggplotly()%>%
@@ -212,7 +232,7 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$tog_input,{
     
-    if(!input$tog_input) {
+    if(input$tog_input == "Input Jet Effieciency") {
       mess_draw <- "Propose jet efficiency"
     } else {
       mess_draw <- "Propose propeller efficiency"
@@ -254,18 +274,10 @@ shinyServer(function(input, output, session) {
   observeEvent(drawChart(), {
     
     drawn_vals <- drawChart()
-    
-    
-    message("drawn_vals")
-    print(drawn_vals)
-    print(length(drawn_vals))
-    # a bodge to be fixed....
+
+    # a bodge to be fixed....?
     drawn_vals <- c(drawn_vals, tail(drawn_vals, 1))
-    
-    
-    
-    
-    
+
     # check status on saved vals
     status_jet <- safe_read_rds("saved_jet_input.rds")
     status_prop <- safe_read_rds("saved_prop_input.rds")
@@ -359,7 +371,7 @@ shinyServer(function(input, output, session) {
       
       ggplot(eff_plot_df, aes(x = kts, y = val, col = cat))+
         geom_line()+
-        theme_classic()
+        theme_minimal()
       
       ggplotly()#%>%
       #layout(legend = list(orientation = 'v', y = 0.9, x = 0.7))
@@ -375,7 +387,7 @@ shinyServer(function(input, output, session) {
       ggplot(end_plot_df, aes(x = kts, y = val, col = cat))+
         geom_line()+
         #geom_text(aes(label = round(val, digits = 1)), nudge_y = 2, angle = 45)+
-        theme_classic()
+        theme_minimal()
       
       ggplotly()%>%
         layout(legend = list(orientation = 'v', y = 0.8, x = 0.5))
@@ -390,7 +402,7 @@ shinyServer(function(input, output, session) {
       ggplot(range_plot_df, aes(x = kts, y = val, col = cat))+
         geom_line()+
         #geom_text(aes(label = round(val, digits = 1)), nudge_y = 2, angle = 45)+
-        theme_classic()
+        theme_minimal()
       
       ggplotly()%>%
         layout(legend = list(orientation = 'v', y = 0.9, x = 0.5))
@@ -406,7 +418,7 @@ shinyServer(function(input, output, session) {
       
       ggplot(power_plot_df, aes(x = kts, y = val, col = cat))+
         geom_line()+
-        theme_classic()
+        theme_minimal()
       
       
       ggplotly()%>%
@@ -457,5 +469,34 @@ shinyServer(function(input, output, session) {
     
     # >> end render drawn ====
   })
+  
+  # restore default values 
+  
+  observeEvent(input$restore_defaults,  {
+    
+    updateSliderInput(session, 
+                      "hotel_load", NULL, 200, 75, 300)
+    
+    updateSliderInput(session, 
+                      "onboarded_batt", "(Onboarded)", 500, 100, 700)
+    
+    updateSliderInput(session, 
+                      "batt_energy_MJ_kg", NULL, 0.46, 0.08, 0.8, step = 0.02)
+                      
+    updateSliderInput(session, 
+                      "HLM_patrol_speed", NULL, 5, 0.5, 7, step = 0.5)
+    
+    updateSliderInput(session,
+                      "max_power", NULL, 7, 5, 9)
+    
+    updateSliderInput(session,
+                      "max_speed", NULL, 20, 16, 24,  step = 0.25)
+    updateSliderInput(session,
+                      "OKR_power", NULL, 500, 50, 5000)
+    
+    updateSliderInput(session,
+                      "OKR_speed", NULL, 10, 0.5, 18)
+  })
+  
   
 })
