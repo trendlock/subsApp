@@ -3,6 +3,7 @@ library(shiny)
 library(tidyverse)
 library(lubridate)
 
+
 library(shinyBS)
 
 library(shinyWidgets)
@@ -11,16 +12,31 @@ library(plotly)
 
 library(shinythemes)
 
-# library(shinyWidgets)
+library(shinycssloaders)
 
 #devtools::install_github("Appsilon/shiny.semantic")
 library(shiny.semantic)
 
-#devtools::install_github("rstudio/shinythemes")
-# library(shinythemes)
-# 
-# #devtools::install_github("nstrayer/shinysense")
+#devtools::install_github("nstrayer/shinysense")
 library(shinysense)
+
+
+
+# loading css
+
+appCSS <- "
+#loading-content {
+  position: absolute;
+  background: #000000;
+  opacity: 0.9;
+  z-index: 100;
+  left: 0;
+  right: 0;
+  height: 100%;
+  text-align: center;
+  color: #FFFFFF;
+}
+"
 
 
 
@@ -30,13 +46,16 @@ shinyUI(
     theme = shinytheme("united"),
     title = "App Title",
     
-    
+
     # Tab 1 ====
     tabPanel(
       title = "First Tab Title",
       
+     
+      
       semanticPage(
         
+          
         div(class = "ui grid",
             
             # blank col?
@@ -45,7 +64,7 @@ shinyUI(
             # eff plot ====
             div(class = "seven wide column",
                 div(class = "ui horizontal divider", uiicon("tag"), "Efficiency Assumption",  bsButton("zoom_eff", "Zoom", size = "extra-small")),
-                uisegment(plotlyOutput("eff_plot", height = "200px")),
+                uisegment(plotlyOutput("eff_plot", height = "200px") %>% withSpinner()),
                 
                 div(class = "ui horizontal divider", uiicon("tag"), "Toggle Input"),
                 
@@ -55,11 +74,11 @@ shinyUI(
                 
                 
                 div(class = "ui horizontal divider", textOutput("message_drawr")),
-                uisegment(shinydrawrUI("drawr_plot")),
+                uisegment(shinydrawrUI("drawr_plot") %>% withSpinner()),
                 
                 # pop up window
                 bsModal("modalExample", "Efficiency Assumption", "zoom_eff", size = "large",
-                        plotlyOutput("eff_plot_modal"))
+                        plotlyOutput("eff_plot_modal") %>% withSpinner())
                 
             ),
             
@@ -144,32 +163,32 @@ shinyUI(
               fluidRow(
                 column(4, align="center",
                        div(class = "ui horizontal divider", uiicon("settings"), "Range", bsButton("zoom_range", "Zoom", size = "extra-small")),
-                       plotlyOutput("range_plot")),
+                       plotlyOutput("range_plot") %>% withSpinner()),
                 
                 # pop up window
                 bsModal("modalExample1", "Range", "zoom_range", size = "large",
-                        plotlyOutput("range_plot_modal")),
+                        plotlyOutput("range_plot_modal") %>% withSpinner()),
                 
                 
                 column(4, align="center",
                        div(class = "ui horizontal divider", uiicon("settings"), "Endurance", bsButton("zoom_endurance", "Zoom", size = "extra-small")),
-                       plotlyOutput("endurance_plot")),
+                       plotlyOutput("endurance_plot") %>% withSpinner()),
                 
                 # pop up window
                 bsModal("modalExample2", "endurance", "zoom_endurance", size = "large",
-                        plotlyOutput("endurance_plot_modal")),
+                        plotlyOutput("endurance_plot_modal") %>% withSpinner()),
                 
                 
                 column(4, align="center",
                        #uiheader("h", , icon = uiicon("settings")),
                        
                        div(class = "ui horizontal divider", uiicon("settings"), "Power", bsButton("zoom_power", "Zoom", size = "extra-small")),
-                       plotlyOutput("power_plot")
+                       plotlyOutput("power_plot") %>% withSpinner()
                 ),
                 
                 # pop up window
                 bsModal("modalExample3", "Power", "zoom_power", size = "large",
-                        plotlyOutput("power_plot_modal"))
+                        plotlyOutput("power_plot_modal") %>% withSpinner())
                 
               )
               
@@ -180,10 +199,10 @@ shinyUI(
         div(class = "ui horizontal divider", uiicon("tag"), "References"),
         "tidyverse, shinyBS, shiny.semantic, Plotly, shinyWidgets, shinysense"
         
-        
+      )
         )
       
-    ))
+    )
 )
 
 
