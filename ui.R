@@ -14,10 +14,10 @@ library(shinythemes)
 
 library(shinycssloaders)
 
-devtools::install_github("rosseji/shiny.semantic@develop")
+#devtools::install_github("rosseji/shiny.semantic@develop")
 library(shiny.semantic)
 
-devtools::install_github("nstrayer/shinysense")
+#devtools::install_github("nstrayer/shinysense")
 library(shinysense)
 
 
@@ -30,7 +30,7 @@ shinyUI(
     title = "App Title",
     
     
-   
+    
     # Tab 1 ====
     tabPanel(
       title = "First Tab Title",
@@ -41,30 +41,49 @@ shinyUI(
       
       semanticPage(
         
-          
+        
         div(class = "ui grid",
-            
-            # blank col?
-            #div(class = "one wide column"),
-            
-            # eff plot ====
-            div(class = "seven wide column",
-                div(class = "ui horizontal divider", uiicon("tag"), "Efficiency Assumption",  bsButton("zoom_eff", "Zoom", size = "extra-small")),
-                uisegment(plotlyOutput("eff_plot", height = "200px") %>% withSpinner()),
+            div(class = "three wide column",
+                div(class = "ui horizontal divider", uiicon("tag"), "Assumptions",
+                    bsButton("restore_default_assum", "Restore Defaults", icon = uiicon("refresh"), size = "extra-small")),
+                div(class = "ui card",
+                    div(class = "content",
+                        uiicon("settings"),
+                        "Hotel Load"),
+                    div(class = "content",
+                        sliderInput("hotel_load", NULL, 75, 300, 200, post = " kW"))),
                 
-
+                div(class = "ui card",
+                    div(class = "content",
+                        uiicon("settings"),
+                        "Batteries Onboarded"),
+                    div(class = "content",
+                        sliderInput("onboarded_batt", NULL, 100, 700, 500, post = " Tonnes"))),
+                
+                div(class = "ui card",
+                    div(class = "content",
+                        uiicon("settings"),
+                        "Battery Energy Density"),
+                    div(class = "content",
+                        sliderInput("batt_energy_MJ_kg", NULL, 0.08, 0.8, 0.46, step = 0.02, post = " MJ/kg"),
+                        sliderInput("batt_energy_Wh_kg", NULL, 22.2, 222, 124, post = " Wh/kg"))),
                 uisegment(align = "center",
                           radioGroupButtons(inputId = "tog_input", 
                                             choices = c("Input Jet Effieciency",  
                                                         "Input Propeller Effieciency"), 
-                                              selected = "Input Jet Effieciency",
-                                            justified = T)),
-                
+                                            selected = "Input Jet Effieciency",
+                                            justified = T, direction = "vertical"))
+            ),
+            
+            # eff plot ====
+            div(class = "seven wide column",
+                div(class = "ui horizontal divider", uiicon("tag"), "Efficiency Assumption",  
+                    bsButton("zoom_eff", "Zoom", size = "extra-small")),
+                uisegment(plotlyOutput("eff_plot", height = "300px")),
                 
                 div(class = "ui horizontal divider", textOutput("message_drawr")),
                 uisegment(height = "300px",
-                  shinydrawrUI("drawr_plot") %>% withSpinner()),
-                
+                          shinydrawrUI("drawr_plot") %>% withSpinner()),
                 # pop up window
                 bsModal("modalExample", "Efficiency Assumption", "zoom_eff", size = "large",
                         plotlyOutput("eff_plot_modal") %>% withSpinner())
@@ -72,83 +91,44 @@ shinyUI(
             ),
             
             # second col
-            div(class = "nine wide column",
-                div(class = "ui horizontal divider", uiicon("tag"), "Assumptions"),
+            div(class = "six wide column",
+                div(class = "ui horizontal divider", uiicon("settings"), "Power Reference Point",
+                    bsButton("restore_defaults_power_ref", "Restore Defaults", icon = uiicon("refresh"), size = "extra-small")),
                 
-                fluidRow(
-                  # Hotel Load slider ====
-                  column(4, 
-                         div(class = "ui card",
-                             div(class = "content",
-                                 div(class = "right floated meta", "(kW)"),
-                                 uiicon("settings"),
-                                 "Hotel Load"),
-                             div(class = "content",
-                                 sliderInput("hotel_load", NULL, 75, 300, 200, post = " kW")),
-                             div(class = "extra content", "other info"))),
-                  # Onborded Batt  ====
-                  column(4, 
-                         div(class = "ui card",
-                             div(class = "content",
-                                 div(class = "right floated meta", "(Tonnes)"),
-                                 uiicon("settings"),
-                                 "Batteries"),
-                             div(class = "content",
-                                 sliderInput("onboarded_batt", "(Onboarded)", 100, 700, 500, post = " Tonnes")))),
-                  # Other ref slider ====
-                  column(4, 
-                         div(class = "ui card",
-                             div(class = "content",
-                                 div(class = "right floated meta", " "),
-                                 uiicon("settings"),
-                                 "Battery Energy Density"),
-                             div(class = "content",
-                                 sliderInput("batt_energy_MJ_kg", NULL, 0.08, 0.8, 0.46, step = 0.02, post = " MJ/kg"),
-                                 sliderInput("batt_energy_Wh_kg", NULL, 22.2, 222, 124, post = " Wh/kg")))),
-                  
-                  # select one method
-                  
-                  br(), br(), br(), br(),br(), br(), br(), br(),br(), br(), br(), br(),
-                  
-                  column(12, 
-                         div(class = "ui horizontal divider", uiicon("settings"), "Power Reference Point")
-                  ),
-                  column(4, align = "center",
-                         uisegment(
-                           div(class = "ui horizontal divider", uiicon("settings"), "Pick Method"),
-                           radioGroupButtons(inputId = "pick_method", 
-                                             choices = c("Hotel Load Match",  
-                                                         "Top Speed + Power",  
-                                                         "Other Known Reference"), 
-                                             selected = "Hotel Load Match",
-                                             direction = "vertical", justified = T),
-                           div(class = "ui horizontal divider", uiicon("settings"), "Pick System"),
-                           radioGroupButtons(inputId = "pick_system", 
-                                             choices = c("Jet",  
-                                                         "Propeller"), 
-                                             selected = "Jet",
-                                             direction = "vertical", justified = T),
-                           div(class = "ui horizontal divider", uiicon("tag"), "Refresh"),
-                           bsButton("restore_defaults", "Restore Defaults", icon = uiicon("refresh"))
-                         )),
-                  column(8,
-                         div(class = "ui raised segment",
-                             bsCollapse(id = "pwr_ref_point_collapse", 
-                                        open = "Hotel Load Match",
-                                        bsCollapsePanel("Hotel Load Match", 
-                                                        "Choose speed at which Hotel Load = Power Drawn by propulsion systems:",
-                                                        sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")),
-                                        bsCollapsePanel("Top Speed + Power",
-                                                        "Choose max power of main motor:",
-                                                        sliderInput("max_power", NULL, 5, 9, 7, post = " MW"),
-                                                        "Choose Top Speed attained:",
-                                                        sliderInput("max_speed", NULL, 16, 24, 20, step = 0.25, post = " kts")),
-                                        
-                                        bsCollapsePanel("Other Known Reference", 
-                                                        "Choose a known power (propulsion) and speedmatch:",
-                                                        sliderInput("OKR_power", NULL, 50, 5000, 500, post = " kW"),
-                                                        sliderInput("OKR_speed", NULL, 0.5, 18, 10, post = " kts"))))
-                  ))),
+                column(12, align = "center",
+                       uisegment(
+                         div(class = "ui horizontal divider", uiicon("settings"), "Pick Method"),
+                         radioGroupButtons(inputId = "pick_method", 
+                                           choices = c("Hotel Load Match",  
+                                                       "Top Speed + Power",  
+                                                       "Other Known Reference"), 
+                                           selected = "Hotel Load Match",
+                                           direction = "vertical", justified = T),
+                         div(class = "ui horizontal divider", uiicon("settings"), "Pick System"),
+                         radioGroupButtons(inputId = "pick_system", 
+                                           choices = c("Jet",  
+                                                       "Propeller"), 
+                                           selected = "Jet",
+                                           direction = "vertical", justified = T)),
+                       div(class = "ui raised segment",
+                           bsCollapse(id = "pwr_ref_point_collapse", 
+                                      open = "Hotel Load Match",
+                                      bsCollapsePanel("Hotel Load Match", 
+                                                      "Choose speed at which Hotel Load = Power Drawn by propulsion systems:",
+                                                      sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")),
+                                      bsCollapsePanel("Top Speed + Power",
+                                                      "Choose max power of main motor:",
+                                                      sliderInput("max_power", NULL, 5, 9, 7, step = 0.25, post = " MW"),
+                                                      "Choose Top Speed attained:",
+                                                      sliderInput("max_speed", NULL, 16, 24, 20, step = 0.25, post = " kts")),
+                                      
+                                      bsCollapsePanel("Other Known Reference", 
+                                                      "Choose a known power (propulsion) and speedmatch:",
+                                                      sliderInput("OKR_power", NULL, 50, 5000, 500, post = " kW"),
+                                                      sliderInput("OKR_speed", NULL, 0.5, 18, 10, post = " kts"))))
+                       
+                )),
+            
             
             fluidPage(
               fluidRow(
@@ -191,15 +171,15 @@ shinyUI(
               
             )
         ),
-      
+        
         br(), br(),br(),
         div(class = "ui horizontal divider", uiicon("tag"), "References"),
         "tidyverse, shinyBS, shiny.semantic, Plotly, shinyWidgets, shinysense"
         
       )
-        )
-      
     )
+    
+  )
 )
 
 

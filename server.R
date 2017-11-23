@@ -13,10 +13,10 @@ library(plotly)
 #devtools::install_github("Appsilon/shiny.semantic")
 library(shiny.semantic)
 
-devtools::install_github("nstrayer/shinysense")
+#devtools::install_github("nstrayer/shinysense")
 library(shinysense)
 
-devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
+#devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
 library(submarines)
 
 
@@ -106,10 +106,10 @@ shinyServer(function(input, output, session) {
       theme_minimal() +
       scale_y_continuous(breaks=seq(0, 1, 0.2)) +
       scale_x_continuous(breaks=seq(0, 20, 2))
+      
      
-    ggplotly()#%>%
-    #layout(legend = list(orientation = 'v', y = 0.9, x = 0.7))
-    
+    ggplotly() %>% 
+      layout(legend = list(orientation = 'v', label = NULL))
   })
   
   
@@ -118,6 +118,10 @@ shinyServer(function(input, output, session) {
     end_plot_df <- df_react() %>%
       filter(cat %in% c("endurance.prop.hour", "endurance.jet.hour"))
     
+    end_plot_df %>% 
+      mutate(cat = case_when(
+        cat =
+      ))
     
     
     y_max <- roundUpNice(max(pull(end_plot_df, val)))
@@ -285,7 +289,7 @@ shinyServer(function(input, output, session) {
     
     
     #  drawing as jet input ======================
-    if(!input$tog_input) {
+    if(input$tog_input == "Input Jet Effieciency") {
       print("running drawing input for jet")
       
       
@@ -472,7 +476,8 @@ shinyServer(function(input, output, session) {
   
   # restore default values 
   
-  observeEvent(input$restore_defaults,  {
+  
+  observeEvent(input$restore_default_assum,  {
     
     updateSliderInput(session, 
                       "hotel_load", NULL, 200, 75, 300)
@@ -482,7 +487,12 @@ shinyServer(function(input, output, session) {
     
     updateSliderInput(session, 
                       "batt_energy_MJ_kg", NULL, 0.46, 0.08, 0.8, step = 0.02)
-                      
+    
+    
+  })
+  
+  observeEvent(input$restore_defaults_power_ref,  {
+    
     updateSliderInput(session, 
                       "HLM_patrol_speed", NULL, 5, 0.5, 7, step = 0.5)
     
@@ -496,7 +506,9 @@ shinyServer(function(input, output, session) {
     
     updateSliderInput(session,
                       "OKR_speed", NULL, 10, 0.5, 18)
+    
   })
+  
   
   
 })
