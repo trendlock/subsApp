@@ -14,10 +14,10 @@ library(shinythemes)
 
 library(shinycssloaders)
 
-#devtools::install_github("rosseji/shiny.semantic@develop")
+devtools::install_github("rosseji/shiny.semantic@develop")
 library(shiny.semantic)
 
-#devtools::install_github("nstrayer/shinysense")
+devtools::install_github("nstrayer/shinysense")
 library(shinysense)
 
 
