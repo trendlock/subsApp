@@ -27,13 +27,13 @@ library(shinysense)
 shinyUI(
   navbarPage(
     theme = shinytheme("united"),
-    title = "App Title",
+    title = "Product 1.0",
     
     
     
     # Tab 1 ====
     tabPanel(
-      title = "First Tab Title",
+      title = "Dashboard",
       
       # css ====
       #includeCSS("www/custom.css"),
@@ -64,15 +64,19 @@ shinyUI(
                     div(class = "content",
                         uiicon("settings"),
                         "Battery Energy Density"),
+                    
                     div(class = "content",
-                        sliderInput("batt_energy_MJ_kg", NULL, 0.08, 0.8, 0.46, step = 0.02, post = " MJ/kg"),
-                        sliderInput("batt_energy_Wh_kg", NULL, 22.2, 222, 124, post = " Wh/kg"))),
+                        sliderInput("batt_energy_MJ_kg", NULL, 0.08, 0.8, 0.14, step = 0.02, post = " MJ/kg"),
+                        
+                        uiOutput("batt_den"))),
+                    
                 uisegment(align = "center",
                           radioGroupButtons(inputId = "tog_input", 
                                             choices = c("Input Jet Effieciency",  
                                                         "Input Propeller Effieciency"), 
                                             selected = "Input Jet Effieciency",
-                                            justified = T, direction = "vertical"))
+                                            justified = T, direction = "vertical"),
+                          bsButton("replot_all", "Replot All"))
             ),
             
             # eff plot ====
@@ -97,13 +101,7 @@ shinyUI(
                 
                 column(12, align = "center",
                        uisegment(
-                         div(class = "ui horizontal divider", uiicon("settings"), "Pick Method"),
-                         radioGroupButtons(inputId = "pick_method", 
-                                           choices = c("Hotel Load Match",  
-                                                       "Top Speed + Power",  
-                                                       "Other Known Reference"), 
-                                           selected = "Hotel Load Match",
-                                           direction = "vertical", justified = T),
+                         
                          div(class = "ui horizontal divider", uiicon("settings"), "Pick System"),
                          radioGroupButtons(inputId = "pick_system", 
                                            choices = c("Jet",  
@@ -111,21 +109,22 @@ shinyUI(
                                            selected = "Jet",
                                            direction = "vertical", justified = T)),
                        div(class = "ui raised segment",
+                           div(class = "ui horizontal divider", uiicon("settings"), "Pick Method"),
                            bsCollapse(id = "pwr_ref_point_collapse", 
                                       open = "Hotel Load Match",
                                       bsCollapsePanel("Hotel Load Match", 
                                                       "Choose speed at which Hotel Load = Power Drawn by propulsion systems:",
-                                                      sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 5, step = 0.5, post = " kts")),
+                                                      sliderInput("HLM_patrol_speed", NULL, 0.5, 7, 2.5, step = 0.5, post = " kts")),
                                       bsCollapsePanel("Top Speed + Power",
                                                       "Choose max power of main motor:",
                                                       sliderInput("max_power", NULL, 5, 9, 7, step = 0.25, post = " MW"),
                                                       "Choose Top Speed attained:",
-                                                      sliderInput("max_speed", NULL, 16, 24, 20, step = 0.25, post = " kts")),
+                                                      sliderInput("max_speed", NULL, 16, 20, 18, step = 0.25, post = " kts")),
                                       
                                       bsCollapsePanel("Other Known Reference", 
                                                       "Choose a known power (propulsion) and speedmatch:",
-                                                      sliderInput("OKR_power", NULL, 50, 5000, 500, post = " kW"),
-                                                      sliderInput("OKR_speed", NULL, 0.5, 18, 10, post = " kts"))))
+                                                      sliderInput("OKR_power", NULL, 50, 5000, 1500, post = " kW"),
+                                                      sliderInput("OKR_speed", NULL, 0.5, 18, 8, post = " kts"))))
                        
                 )),
             
