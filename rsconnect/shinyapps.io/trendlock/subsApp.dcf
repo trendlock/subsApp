@@ -5,9 +5,9 @@ account: trendlock
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 238091
-bundleId: 1092539
+bundleId: 1092700
 url: https://trendlock.shinyapps.io/subsApp/
-when: 1511446421.84183
+when: 1511452390.76437
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: saved_jet_input.rds|saved_prop_input_1511443667.07302.rds|saved_prop_input_1511443746.68455.rds|saved_prop_input_1511446008.04242.rds|saved_prop_input_1511446011.84278.rds|saved_prop_input_1511446014.96507.rds|saved_prop_input_1511446017.77704.rds|saved_prop_input_1511446028.16623.rds|saved_prop_input_1511446184.6739.rds|saved_prop_input_1511446204.96334.rds|saved_prop_input_1511446209.43495.rds
+ignoredFiles: saved_jet_input.rds

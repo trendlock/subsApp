@@ -14,10 +14,10 @@ library(shinythemes)
 
 library(shinycssloaders)
 
-#devtools::install_github("rosseji/shiny.semantic@develop")
+devtools::install_github("rosseji/shiny.semantic@develop")
 library(shiny.semantic)
 
-#devtools::install_github("nstrayer/shinysense")
+devtools::install_github("nstrayer/shinysense")
 library(shinysense)
 
 
@@ -51,7 +51,7 @@ shinyUI(
                         uiicon("settings"),
                         "Hotel Load"),
                     div(class = "content",
-                        sliderInput("hotel_load", NULL, 75, 300, 200, post = " kW"))),
+                        sliderInput("hotel_load", NULL, 75, 300, 150, post = " kW"))),
                 
                 div(class = "ui card",
                     div(class = "content",
@@ -76,7 +76,12 @@ shinyUI(
                                                         "Input Propeller Effieciency"), 
                                             selected = "Input Jet Effieciency",
                                             justified = T, direction = "vertical"),
-                          bsButton("replot_all", "Replot All"))
+                          bsButton("replot_all", "Replot All")),
+                
+                
+                uisegment(align = "center",
+                          a(href = "https://www.trendlock.com.au/", "trendlock.com.au"),
+                img(src = "tl_logo.png", width = "170", href = "https://www.trendlock.com.au/"))
             ),
             
             # eff plot ====
@@ -124,7 +129,9 @@ shinyUI(
                                       bsCollapsePanel("Other Known Reference", 
                                                       "Choose a known power (propulsion) and speedmatch:",
                                                       sliderInput("OKR_power", NULL, 50, 5000, 1500, post = " kW"),
-                                                      sliderInput("OKR_speed", NULL, 0.5, 18, 8, post = " kts"))))
+                                                      sliderInput("OKR_speed", NULL, 0.5, 18, 8, post = " kts")))),
+                       img(src = "eff.png", width = "400"), br(),
+                       a(href = "http://downloads.hindawi.com/journals/ijrm/1995/936068.pdf", "Source")
                        
                 )),
             
