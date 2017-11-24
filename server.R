@@ -2,6 +2,7 @@
 # Libraries ----
 library(shiny)
 library(tidyverse)
+library(glue)
 library(lubridate)
 library(shinyBS)
 
@@ -19,11 +20,16 @@ devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/
 library(submarines)
 
 
+devtools::install_github("trendlock/fetch", auth_token = read_rds("extdata/gh_token.rds"))
+library(fetch)
+
+
+
 
 # Load Data ----
 
 df <- read_rds("extdata/default_subs_df.rds")
-
+app <- "subsApp"
 
 # Server ====
 
@@ -169,10 +175,11 @@ shinyServer(function(input, output, session) {
   
 
       
-      # check status on saved vals
-  
-      #write_rds(drawn_vals, glue::glue("saved_prop_input_{now() %>% as.numeric}.rds"))
-  
+      # write drawns vals 1 ====
+      sys_ <- if(input$tog_input == "Input Jet Effieciency") "jet" else "prop"
+      drawn_vals_pth <- glue("saved_{sys_}_input_{now() %>% as.numeric}.rds")
+      write_rds(drawn_vals, drawn_vals_pth)
+
       
       print(input$tog_input)
       #  drawing as jet input ======================
@@ -406,6 +413,12 @@ shinyServer(function(input, output, session) {
       
       # >> end render drawn ====
     
+      
+      # AWS push 1 =====
+      
+      fetch::push_to_cloud(drawn_vals_pth, drawn_vals_pth, "subs-drawn-eff", app)
+      
+      
   })
   
   
@@ -424,10 +437,11 @@ shinyServer(function(input, output, session) {
     
     
     
-    # check status on saved vals
-    
-    write_rds(drawn_vals, glue::glue("saved_prop_input_{now() %>% as.numeric}.rds"))
-    
+    # write drawns vals 2 ====
+    sys_ <- if(input$tog_input == "Input Jet Effieciency") "jet" else "prop"
+    drawn_vals_pth <- glue("saved_{sys_}_input_{now() %>% as.numeric}.rds")
+    write_rds(drawn_vals, drawn_vals_pth)
+
     
     print(input$tog_input)
     #  drawing as jet input ======================
@@ -660,6 +674,12 @@ shinyServer(function(input, output, session) {
     })
     
     # >> end render drawn ====
+    
+    
+    # AWS push 2 =====
+    
+    fetch::push_to_cloud(drawn_vals_pth, drawn_vals_pth, "subs-drawn-eff", app)
+    
     
   })
   
