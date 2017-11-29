@@ -12,10 +12,10 @@ library(plotly)
 
 # remotes
 
-devtools::install_github("rosseji/shiny.semantic@develop")
-devtools::install_github("nstrayer/shinysense")
-devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
-devtools::install_github("trendlock/fetch", auth_token = read_rds("extdata/gh_token.rds"))
+# devtools::install_github("rosseji/shiny.semantic@develop")
+# devtools::install_github("nstrayer/shinysense")
+# devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
+# devtools::install_github("trendlock/fetch", auth_token = read_rds("extdata/gh_token.rds"))
 
 library(shiny.semantic)
 library(shinysense)
@@ -36,8 +36,8 @@ shinyServer(function(input, output, session) {
   
   
   
-  addPopover(session, "info_source", "Title of info", 
-             content = paste0("<p>Explination goes here</p>",
+  addPopover(session, "info_source", "Example Jet Efficiency", 
+             content = paste0("<p>The black circles or white triangles represent propulsive efficiency. Note speed here is in m/s, multiply by ~2 to get kts</p>",
                               '<a href="http://downloads.hindawi.com/journals/ijrm/1995/936068.pdf">Source</a>'),
              trigger = 'click')
 

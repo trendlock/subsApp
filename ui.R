@@ -17,8 +17,8 @@ library(shinycssloaders)
 
 # remotes
 
-devtools::install_github("nstrayer/shinysense")
-devtools::install_github("rosseji/shiny.semantic@develop")
+# devtools::install_github("nstrayer/shinysense")
+# devtools::install_github("rosseji/shiny.semantic@develop")
 
 
 library(shiny.semantic)
@@ -85,7 +85,7 @@ shinyUI(
                          
                   # INSTRUCTION 1 ====
                   data.step = 1,
-                  data.intro = "These three slide rules just need one instruction"),
+                  data.intro = "Select Starting Assumptions, which apply equally to both propulsion types."),
                     
                 uisegment(
                   bsButton("replot_all", "Replot All")),
@@ -122,7 +122,7 @@ shinyUI(
                 
                 # INSTRUCTION 2 ====
                 data.step = 2,
-                data.intro = "Drag mouse to draw curve. It will only plot a curve that goes all teh way from the left to the right hand side."),
+                data.intro = "Click and drag mouse slowly to draw curve. It will only plot a curve that goes all the way from the left to the right hand side. Once complete, the curve can be adjusted at any point. Check the plot above to see the smoothed version which will be used in model. Use tabs above to switch system."),
             
                 # pop up window
                 bsModal("modalExample", "Efficiency Assumption", "zoom_eff", size = "large",
@@ -148,7 +148,7 @@ shinyUI(
                          
                          # INSTRUCTION 3 ====
                          data.step = 3,
-                         data.intro = "You can change which system you want to model..."),
+                         data.intro = "Choose which system you have a known reference point for."),
                        
                        
                        
@@ -174,7 +174,7 @@ shinyUI(
                             
                             # INSTRUCTION 4 ====
                             data.step = 4,
-                            data.intro = "Choose one of the three methods.")
+                            data.intro = "Select just one method to provide a power-consumption reference point for a given speed")
                        ),
                       
                        br(),
@@ -233,7 +233,7 @@ shinyUI(
                 
                 # INSTRUCTION 5 ====
                 data.step = 5,
-                data.intro = "These plots show...")
+                data.intro = "These are the output plots. Put your mouse over the lines to inspect individual points. Click and drag to zoom in on a section of the plots, double-click to zoom back out. Use the tools in the top right of each plot to export, or compare points. Make sure you check the maximum power to see if top speed is realistic with your assumptions!")
               
               
                 
