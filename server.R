@@ -10,17 +10,17 @@ library(shinyBS)
 
 library(plotly)
 
-devtools::install_github("rosseji/shiny.semantic@develop")
+# devtools::install_github("rosseji/shiny.semantic@develop")
 library(shiny.semantic)
 
-devtools::install_github("nstrayer/shinysense")
+# devtools::install_github("nstrayer/shinysense")
 library(shinysense)
 
-devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
+# devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
 library(submarines)
 
 
-devtools::install_github("trendlock/fetch", auth_token = read_rds("extdata/gh_token.rds"))
+# devtools::install_github("trendlock/fetch", auth_token = read_rds("extdata/gh_token.rds"))
 library(fetch)
 
 
