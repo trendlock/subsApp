@@ -12,6 +12,7 @@ library(plotly)
 
 # remotes
 
+
 devtools::install_github("rosseji/shiny.semantic@develop")
 devtools::install_github("nstrayer/shinysense")
 devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
@@ -20,6 +21,7 @@ devtools::install_github("trendlock/fetch", auth_token = read_rds("extdata/gh_to
 library(shiny.semantic)
 library(shinysense)
 library(submarines)
+
 library(fetch)
 
 

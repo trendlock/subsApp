@@ -14,7 +14,6 @@ library(shinycssloaders)
 
 
 
-
 # remotes
 
 devtools::install_github("nstrayer/shinysense")
@@ -31,7 +30,7 @@ library(shinysense)
 shinyUI(
   navbarPage(
     theme = shinytheme("united"),
-    title = "Product 1.0",
+    title = "SubsApp",
     
     
     
@@ -93,9 +92,10 @@ shinyUI(
                 
                 
                 uisegment(align = "center",
-                          a(href = "https://www.trendlock.com.au/", "trendlock.com.au"), 
-                          br(), br(),
-                img(src = "tl_logo.png", width = "170", href = "https://www.trendlock.com.au/"))
+
+                          tags$a(href='https://www.trendlock.com.au/',
+                                 tags$img(src='tl_logo.png', width = "170")))
+
             ),
             
             # eff plot ====
