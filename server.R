@@ -1,26 +1,25 @@
 
 # Libraries ----
+
+# on CRAN
 library(shiny)
 library(tidyverse)
 library(glue)
 library(lubridate)
 library(shinyBS)
-
-
-
 library(plotly)
 
+
+# remotes
+
 devtools::install_github("rosseji/shiny.semantic@develop")
-library(shiny.semantic)
-
 devtools::install_github("nstrayer/shinysense")
-library(shinysense)
-
 devtools::install_github("trendlock/submarines", auth_token = read_rds("extdata/gh_token.rds"))
-library(submarines)
-
-
 devtools::install_github("trendlock/fetch", auth_token = read_rds("extdata/gh_token.rds"))
+
+library(shiny.semantic)
+library(shinysense)
+library(submarines)
 library(fetch)
 
 
@@ -34,6 +33,14 @@ app <- "subsApp"
 # Server ====
 
 shinyServer(function(input, output, session) {
+  
+  
+  
+  addPopover(session, "info_source", "Title of info", 
+             content = paste0("<p>Explination goes here</p>",
+                              '<a href="http://downloads.hindawi.com/journals/ijrm/1995/936068.pdf">Source</a>'),
+             trigger = 'click')
+
   
   # pre user input ----
  
@@ -884,5 +891,17 @@ shinyServer(function(input, output, session) {
     }
 
     })
+  
+  
+  # INTRO server side funs ====
+  
+  # start introjs when button is pressed with custom options and events
+  observeEvent(input$instructions,
+               introjs(session, options = list("nextLabel"="Next",
+                                               "prevLabel"="Previous",
+                                               "skipLabel"="Skip"))
+  )
+  
+
   
 })
